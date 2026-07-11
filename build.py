@@ -104,7 +104,7 @@ for f in sorted(ART.glob("*.md"), reverse=True):
 jsonld_site = ('<script type="application/ld+json">{"@context":"https://schema.org",'
                f'"@type":"WebSite","name":"{SITE_NAME}","url":"{SITE}/",'
                f'"description":"{SITE_DESC}","inLanguage":"ja"}}</script>')
-idx = HEAD.format(title=f"{SITE_NAME} | 本と暮らしとお金の知って得したメモ", desc=SITE_DESC,
+idx = HEAD.format(title=f"{SITE_NAME} | 暮らしに彩りをくれる本とモノのメモ", desc=SITE_DESC,
                   url=f"{SITE}/", jsonld=jsonld_site, css=CSS, site=SITE_NAME, site_url=SITE)
 idx += "<h1>記事一覧</h1>"
 for date, title, slug, _ in posts:
@@ -136,7 +136,7 @@ for date, title, slug, desc in posts:
 (OUT / "rss.xml").write_text(rss + "</channel></rss>\n", encoding="utf-8")
 
 # llms.txt — AIエージェント向けのサイト説明 (提案標準)
-llms = f"# {SITE_NAME}\n\n> {SITE_DESC}\n\nXで実際に話題になっている本・商品・お金の知識を、日本語で毎日記録しているサイトです。記事には商品への参照リンク(PR)が含まれます。\n\n## 記事一覧\n\n"
+llms = f"# {SITE_NAME}\n\n> {SITE_DESC}\n\nXで実際に「買ってよかった」と愛されている本やモノを、日本語で毎日記録しているサイトです。記事には商品への参照リンク(PR)が含まれます。\n\n## 記事一覧\n\n"
 for date, title, slug, desc in posts:
     llms += f"- [{title}]({SITE}/{slug}): {desc}\n"
 (OUT / "llms.txt").write_text(llms, encoding="utf-8")
