@@ -23,7 +23,11 @@ padding-left:10px;margin-top:2em}.pr{background:#fff3e0;border:1px solid #f0c48a
 padding:8px 14px;font-size:.85em;color:#8a5a1e}.date{color:#98a1b3;font-size:.85em}
 header{margin-bottom:2em}header a{text-decoration:none;color:#253049}
 .site{font-weight:bold;font-size:1.1em}.desc{font-size:.85em;color:#98a1b3}
-footer{margin-top:3em;font-size:.8em;color:#98a1b3;border-top:1px solid #eee;padding-top:1em}"""
+footer{margin-top:3em;font-size:.8em;color:#98a1b3;border-top:1px solid #eee;padding-top:1em}
+.back{display:inline-block;margin:8px 0;font-size:.9em;text-decoration:none}
+.totop{position:fixed;right:16px;bottom:16px;background:#c05621;color:#fff;
+padding:10px 14px;border-radius:24px;text-decoration:none;font-size:.85em;
+box-shadow:0 2px 8px rgba(0,0,0,.2)}"""
 
 HEAD = """<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -88,8 +92,11 @@ for f in sorted(ART.glob("*.md"), reverse=True):
     ).replace("'", '"')
     page = HEAD.format(title=f"{title} | {SITE_NAME}", desc=html.escape(desc),
                        url=url, jsonld=jsonld, css=CSS, site=SITE_NAME, site_url=SITE)
+    page += '<a class="back" href="./index.html">← 記事一覧に戻る</a>'
     page += '<div class="pr">※本記事にはプロモーション(PR)が含まれます</div>'
-    page += f'<div class="date">{date}</div>' + md2html(md) + FOOT
+    page += f'<div class="date">{date}</div>' + md2html(md)
+    page += '<p><a class="back" href="./index.html">← 記事一覧に戻る</a></p>'
+    page += '<a class="totop" href="./index.html">📚 目次へ</a>' + FOOT
     (OUT / slug).write_text(page, encoding="utf-8")
     posts.append((date, title, slug, desc))
 
