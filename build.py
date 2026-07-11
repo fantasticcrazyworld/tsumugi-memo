@@ -59,6 +59,8 @@ def md2html(md: str) -> str:
             out.append("")
         else:
             t = html.escape(line)
+            t = re.sub(r"!\[([^\]]*)\]\(([^)]+)\)",
+                       r'<img src="\2" alt="\1" style="max-width:240px;border-radius:8px;display:block;margin:8px 0">', t)
             t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2" rel="nofollow sponsored">\1</a>', t)
             t = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", t)
             out.append(f"<p>{t}</p>")
