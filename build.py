@@ -14,7 +14,7 @@ OUT.mkdir(exist_ok=True)
 
 SITE = "https://fantasticcrazyworld.github.io/tsumugi-memo"
 SITE_NAME = "つむぎメモ"
-SITE_DESC = "Xで話題の本・暮らしに役立つモノ・お金の知識を、毎日ウォッチして紡ぐメモ。運営: やん(@tsumugi_memo15)"
+SITE_DESC = "暮らしに彩りを添えてくれる本とモノを、Xの「買ってよかった」から毎日すくい上げて紡ぐメモ。運営: やん(@tsumugi_memo15)"
 
 CSS = """body{font-family:'Hiragino Sans',sans-serif;max-width:720px;margin:0 auto;
 padding:24px 16px;color:#253049;line-height:1.9;background:#fffdf8}
@@ -39,7 +39,7 @@ HEAD = """<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
 <link rel="alternate" type="application/rss+xml" title="{site}" href="{site_url}/rss.xml">
 {jsonld}<style>{css}</style></head><body>
 <header><a href="./index.html"><span class="site">つむぎメモ 📚</span></a>
-<div class="desc">本と暮らしとお金の「知って得した」を紡ぐメモ</div></header>"""
+<div class="desc">暮らしに彩りをくれる、本とモノのメモ</div></header>"""
 
 FOOT = """<footer>運営: やん (<a href="https://x.com/tsumugi_memo15">@tsumugi_memo15</a>)
 | 本サイトはAmazonアソシエイト・プログラムおよびA8.netに参加しており、
