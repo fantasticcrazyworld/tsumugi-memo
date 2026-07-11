@@ -36,6 +36,7 @@ HEAD = """<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
 <link rel="canonical" href="{url}">
 <meta property="og:title" content="{title}"><meta property="og:description" content="{desc}">
 <meta property="og:type" content="article"><meta property="og:url" content="{url}">
+<meta property="og:image" content="{ogimg}"><meta name="twitter:card" content="summary_large_image">
 <link rel="alternate" type="application/rss+xml" title="{site}" href="{site_url}/rss.xml">
 {jsonld}<style>{css}</style></head><body>
 <header><a href="./index.html"><span class="site">つむぎメモ 📚</span></a>
@@ -73,6 +74,39 @@ def first_para(md: str) -> str:
     return SITE_DESC[:110]
 
 
+
+
+# --- 記事タイトルカード画像 (アイキャッチ/OG画像) の自動生成 ---
+from PIL import Image, ImageDraw, ImageFont
+
+IMG = OUT / "img"
+IMG.mkdir(exist_ok=True)
+_MINCHO = "/System/Library/Fonts/ヒラギノ明朝 ProN.ttc"
+
+
+def make_card(title: str, path: Path) -> None:
+    if path.exists():
+        return
+    W, H = 1200, 630
+    im = Image.new("RGB", (W, H), (255, 253, 248))
+    d = ImageDraw.Draw(im)
+    # 上下の帯 (ブランドカラー)
+    d.rectangle([0, 0, W, 14], fill=(192, 86, 33))
+    d.rectangle([0, H - 90, W, H], fill=(37, 48, 76))
+    f_title = ImageFont.truetype(_MINCHO, 64)
+    f_small = ImageFont.truetype(_MINCHO, 30)
+    # タイトルを14文字前後で折り返し (最大4行)
+    t = title.split("【")[0]
+    lines = [t[i:i + 15] for i in range(0, len(t), 15)][:4]
+    y = (H - 90 - len(lines) * 88) // 2
+    for ln in lines:
+        d.text((80, y), ln, font=f_title, fill=(37, 48, 76))
+        y += 88
+    d.text((80, H - 68), "つむぎメモ — 暮らしに彩りをくれる本とモノのメモ",
+           font=f_small, fill=(255, 250, 240))
+    im.save(path)
+
+
 posts = []
 for f in sorted(ART.glob("*.md"), reverse=True):
     md = f.read_text(encoding="utf-8")
@@ -90,11 +124,14 @@ for f in sorted(ART.glob("*.md"), reverse=True):
         f'"description":{desc!r},"mainEntityOfPage":"{url}"'
         "}</script>"
     ).replace("'", '"')
+    make_card(title, IMG / f"{f.stem}.png")
+    ogimg = f"{SITE}/img/{f.stem}.png"
     page = HEAD.format(title=f"{title} | {SITE_NAME}", desc=html.escape(desc),
-                       url=url, jsonld=jsonld, css=CSS, site=SITE_NAME, site_url=SITE)
+                       url=url, jsonld=jsonld, css=CSS, site=SITE_NAME, site_url=SITE, ogimg=ogimg)
     page += '<a class="back" href="./index.html">← 記事一覧に戻る</a>'
     page += '<div class="pr">※本記事にはプロモーション(PR)が含まれます</div>'
-    page += f'<div class="date">{date}</div>' + md2html(md)
+    page += f'<div class="date">{date}</div>'
+    page += f'<img src="./img/{f.stem}.png" alt="{html.escape(title)}" style="width:100%;border-radius:12px;margin:12px 0">' + md2html(md)
     page += '<p><a class="back" href="./index.html">← 記事一覧に戻る</a></p>'
     page += '<a class="totop" href="./index.html">📚 目次へ</a>' + FOOT
     (OUT / slug).write_text(page, encoding="utf-8")
@@ -104,8 +141,10 @@ for f in sorted(ART.glob("*.md"), reverse=True):
 jsonld_site = ('<script type="application/ld+json">{"@context":"https://schema.org",'
                f'"@type":"WebSite","name":"{SITE_NAME}","url":"{SITE}/",'
                f'"description":"{SITE_DESC}","inLanguage":"ja"}}</script>')
+make_card(SITE_NAME, IMG / "site.png")
 idx = HEAD.format(title=f"{SITE_NAME} | 暮らしに彩りをくれる本とモノのメモ", desc=SITE_DESC,
-                  url=f"{SITE}/", jsonld=jsonld_site, css=CSS, site=SITE_NAME, site_url=SITE)
+                  url=f"{SITE}/", jsonld=jsonld_site, css=CSS, site=SITE_NAME, site_url=SITE,
+                  ogimg=f"{SITE}/img/site.png")
 idx += "<h1>記事一覧</h1>"
 for date, title, slug, _ in posts:
     idx += f'<p><span class="date">{date}</span><br><a href="./{slug}">{title}</a></p>'
